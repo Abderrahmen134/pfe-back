@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use Illuminate\Http\Request;
 
+
 class ClientController extends Controller
 {
     // Afficher la liste des clients
@@ -17,10 +18,12 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name'  => 'required|string|max:255',
+            'prénom'  => 'required|string|max:255',
+            'nom'  => 'required|string|max:255',
             'email' => 'required|email|unique:clients,email',
+            'mot de passe' => 'required|string|min:6',
             'phone' => 'nullable|string',
-            'address' => 'nullable|string',
+            'gouvernorat' => 'nullable|string',
         ]);
 
         $client = Client::create($validatedData);
@@ -41,10 +44,12 @@ class ClientController extends Controller
         $client = Client::findOrFail($id);
 
         $validatedData = $request->validate([
-            'name'  => 'sometimes|required|string|max:255',
+            'prénom'  => 'required|string|max:255',
+            'nom'  => 'required|string|max:255',
             'email' => 'sometimes|required|email|unique:clients,email,'.$client->id,
+            'mot de passe' => 'required|string|min:6',
             'phone' => 'nullable|string',
-            'address' => 'nullable|string',
+            'gouvernorat' => 'nullable|string',
         ]);
 
         $client->update($validatedData);

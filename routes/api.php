@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DevisController;
-
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,6 +19,7 @@ use App\Http\Controllers\DevisController;
 Route::apiResource('clients', ClientController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('devis', DevisController::class);
+Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
