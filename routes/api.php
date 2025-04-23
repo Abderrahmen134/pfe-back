@@ -20,6 +20,15 @@ Route::apiResource('clients', ClientController::class);
 Route::apiResource('products', ProductController::class);
 Route::apiResource('devis', DevisController::class);
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+Route::middleware('api.token')->group(function () {
+    Route::get('/client/profile', function (Request $request) {
+            return $request->auth_client; // retournera le client authentifié
+     });
+    
+        // ou toute autre route protégée
+    });
+    
 });
