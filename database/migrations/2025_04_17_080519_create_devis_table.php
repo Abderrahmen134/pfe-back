@@ -12,19 +12,19 @@ class CreateDevisTable extends Migration
      * @return void
      */
     public function up()
-{
-    Schema::create('devis', function (Blueprint $table) {
-        $table->id();
-        $table->string('reference')->unique();
-        $table->foreignId('client_id')->constrained('clients')->onDelete('cascade');
-        $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-        $table->integer('quantity');
-        $table->string('status')->default('pending');
-        $table->text('note')->nullable();
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('devis', function (Blueprint $table) {
+            $table->id();
+            $table->string('status')->default("untreated");
+            $table->string('société');
+            $table->unsignedBigInteger('id_client');
+            $table->timestamps();
+    
+            // Relations (foreign keys)
+            $table->foreign('id_client')->references('id')->on('clients')->onDelete('cascade');
 
+        });
+    }
 
     /**
      * Reverse the migrations.

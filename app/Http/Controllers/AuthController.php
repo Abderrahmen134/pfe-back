@@ -15,7 +15,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'prénom'       => 'required|string|max:255',
+            'prenom'       => 'required|string|max:255',
             'nom'          => 'required|string|max:255',
             'email'        => 'required|email|unique:clients,email',
             'mot_de_passe' => 'required|string|min:6',
@@ -24,7 +24,7 @@ class AuthController extends Controller
         ]);
 
         $client = Client::create([
-            'prénom'       => $data['prénom'],
+            'prenom'       => $data['prenom'],
             'nom'          => $data['nom'],
             'email'        => $data['email'],
             'mot_de_passe' => Hash::make($data['mot_de_passe']),
