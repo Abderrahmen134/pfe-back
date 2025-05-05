@@ -16,7 +16,7 @@ class CreateDevisTable extends Migration
         Schema::create('devis', function (Blueprint $table) {
             $table->id();
             $table->string('status')->default("untreated");
-            $table->string('société');
+            $table->string('societe');
             $table->unsignedBigInteger('id_client');
             $table->timestamps();
     

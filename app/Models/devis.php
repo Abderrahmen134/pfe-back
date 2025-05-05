@@ -11,7 +11,7 @@ class Devis extends Model
 
     protected $fillable = [
         'status',
-        'société',
+        'societe',
         'id_client',
         
     ];

@@ -22,7 +22,7 @@ class DevisController extends Controller
     
         $validated = $request->validate([
             'status' => 'required|string|min:1',
-            'société' => 'required|string|max:255',
+            'societe' => 'required|string|max:255',
             'id_client' => 'required|exists:clients,id',
             
         ]);
@@ -55,7 +55,7 @@ class DevisController extends Controller
 
         $validated = $request->validate([
             'status' => 'required|string|min:1',
-            'société' => 'sometimes|string|max:255',
+            'societe' => 'sometimes|string|max:255',
             'id_client' => 'sometimes|exists:clients,id',
             
         ]);
