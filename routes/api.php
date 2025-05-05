@@ -35,4 +35,4 @@ Route::middleware('api.token')->group(function () {
     });
     
 });
-Route::apiResource('ligne-devis', LigneDevisController::class);
+Route::get('/ligne-devis/devis/{id}', [App\Http\Controllers\LigneDevisController::class, 'getByDevis']);

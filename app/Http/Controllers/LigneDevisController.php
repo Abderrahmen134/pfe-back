@@ -58,13 +58,61 @@ class LigneDevisController extends Controller
     public function update(Request $request, $id)
     {
         $ligne = LigneDevis::findOrFail($id);
-        $ligne->update($request->all());
-
-        return $ligne;
+    
+        // Validation (remise et quantite au minimum)
+        $validated = $request->validate([
+            'quantite' => 'sometimes|integer|min:1',
+            'remise' => 'sometimes|numeric|min:0|max:100',
+        ]);
+    
+        // Met à jour les champs s’ils sont présents
+        if (isset($validated['quantite'])) {
+            $ligne->quantite = $validated['quantite'];
+        }
+    
+        if (isset($validated['remise'])) {
+            $ligne->remise = $validated['remise'];
+        }
+    
+        // Recalculer les totaux
+        $product = Product::findOrFail($ligne->id_product);
+        $prixUnitaire = $product->price;
+        $quantite = $ligne->quantite;
+        $remise = $ligne->remise;
+        $tva = 19;
+    
+        $total_ht = ($prixUnitaire * $quantite) * (1 - ($remise / 100));
+        $total_ttc = $total_ht * (1 + ($tva / 100));
+    
+        // Met à jour les totaux
+        $ligne->total_ht = $total_ht;
+        $ligne->tva = $tva;
+        $ligne->total_ttc = $total_ttc;
+    
+        // Sauvegarde finale
+        $ligne->save();
+    
+        return response()->json([
+            'message' => 'Ligne mise à jour avec recalcul des totaux',
+            'ligne_devis' => $ligne
+        ]);
     }
+    
 
     public function destroy($id)
     {
         return LigneDevis::destroy($id);
     }
+
+public function getByDevis($id)
+{
+    $lignes = LigneDevis::where('id_devis', $id)->get();
+
+    if ($lignes->isEmpty()) {
+        return response()->json(['message' => 'Aucune ligne trouvée pour ce devis'], 404);
+    }
+
+    return response()->json($lignes);
+}
+
 }
