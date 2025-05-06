@@ -20,4 +20,9 @@ class LigneDevis extends Model
         'tva',
         'total_ttc',
     ];
+    public function product()
+{
+    return $this->belongsTo(Product::class, 'id_product');
+}
+
 }

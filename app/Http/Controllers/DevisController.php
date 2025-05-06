@@ -77,4 +77,15 @@ class DevisController extends Controller
 
         return response()->json(['message' => 'Devis supprimé avec succès']);
     }
+
+public function getDevisByClient($id)
+{
+    $devis = Devis::where('id_client', $id)->get();
+
+    if ($devis->isEmpty()) {
+        return response()->json(['message' => 'Aucun devis trouvé pour ce client.'], 404);
+    }
+
+    return response()->json($devis, 200);
+}
 }

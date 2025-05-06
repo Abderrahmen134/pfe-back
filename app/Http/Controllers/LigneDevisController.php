@@ -104,9 +104,9 @@ class LigneDevisController extends Controller
         return LigneDevis::destroy($id);
     }
 
-public function getByDevis($id)
+    public function getByDevis($id)
 {
-    $lignes = LigneDevis::where('id_devis', $id)->get();
+    $lignes = LigneDevis::with('product')->where('id_devis', $id)->get();
 
     if ($lignes->isEmpty()) {
         return response()->json(['message' => 'Aucune ligne trouvée pour ce devis'], 404);
@@ -114,5 +114,6 @@ public function getByDevis($id)
 
     return response()->json($lignes);
 }
+
 
 }
