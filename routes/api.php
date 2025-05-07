@@ -37,3 +37,4 @@ Route::middleware('api.token')->group(function () {
 });
 Route::get('/ligne-devis/devis/{id}', [App\Http\Controllers\LigneDevisController::class, 'getByDevis']);
 Route::get('/devis/client/{id}', [DevisController::class, 'getDevisByClient']);
+Route::apiResource('admins', App\Http\Controllers\AdminController::class);
