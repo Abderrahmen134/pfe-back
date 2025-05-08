@@ -8,6 +8,7 @@ use App\Http\Controllers\DevisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LigneDevisController;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -38,3 +39,10 @@ Route::middleware('api.token')->group(function () {
 Route::get('/ligne-devis/devis/{id}', [App\Http\Controllers\LigneDevisController::class, 'getByDevis']);
 Route::get('/devis/client/{id}', [DevisController::class, 'getDevisByClient']);
 Route::apiResource('admins', App\Http\Controllers\AdminController::class);
+Route::put('/devis/{id}/demander-commande', [DevisController::class, 'demanderCommande']);
+Route::put('/devis/{id}/gerer-commande', [DevisController::class, 'gererCommande']);
+Route::get('/devis/commandes-demandees', [DevisController::class, 'devisCommandesDemandees']);
+Route::get('/test', [DevisController::class, 'test']);
+
+
+

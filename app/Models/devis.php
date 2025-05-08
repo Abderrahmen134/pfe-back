@@ -13,9 +13,7 @@ class Devis extends Model
         'status',
         'societe',
         'id_client',
-        
     ];
-
     // Relations
     public function client()
     {
