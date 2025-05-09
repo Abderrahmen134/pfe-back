@@ -21,7 +21,9 @@ use App\Http\Controllers\LigneDevisController;
 */
 Route::apiResource('clients', ClientController::class);
 Route::apiResource('products', ProductController::class);
-Route::apiResource('devis', DevisController::class);
+Route::resource('devis', DevisController::class)->only([
+    'index', 'store', 'update', 'destroy'
+]);
 Route::apiResource('ligne-devis', LigneDevisController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
