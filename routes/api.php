@@ -7,7 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DevisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LigneDevisController;
-
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +19,13 @@ use App\Http\Controllers\LigneDevisController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 Route::apiResource('clients', ClientController::class);
 Route::apiResource('products', ProductController::class);
-Route::apiResource('devis', DevisController::class);
+Route::resource('devis', DevisController::class)->only([
+    'index', 'store', 'update', 'destroy'
+]);
+
 Route::apiResource('ligne-devis', LigneDevisController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -40,9 +44,11 @@ Route::get('/ligne-devis/devis/{id}', [App\Http\Controllers\LigneDevisController
 Route::get('/devis/client/{id}', [DevisController::class, 'getDevisByClient']);
 Route::apiResource('admins', App\Http\Controllers\AdminController::class);
 Route::put('/devis/{id}/demander-commande', [DevisController::class, 'demanderCommande']);
-Route::put('/devis/{id}/gerer-commande', [DevisController::class, 'gererCommande']);
-Route::get('/devis/commandes-demandees', [DevisController::class, 'devisCommandesDemandees']);
-Route::get('/test', [DevisController::class, 'test']);
+Route::put('/devis/{id}/gererCommande', [DevisController::class, 'gererCommande']);
+Route::get('/devis/CommandesDemandees', [DevisController::class, 'devisCommandesDemandees']);
+Route::get('/devis/commandeValidee', [DevisController::class, 'commandeValidee']);
+Route::post('/admin/register', [AuthController::class, 'register']);
+Route::post('/admin/login', [AuthController::class, 'login']);
 
 
 

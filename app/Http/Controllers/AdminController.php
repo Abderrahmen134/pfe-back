@@ -5,59 +5,54 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
+class AdminAuthController extends Controller
 {
-    public function index()
+    public function register(Request $request)
     {
-        return response()->json(Admin::all());
-    }
-
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'prenom'  => 'required|string|max:255',
-            'nom'  => 'required|string|max:255',
-            'email' => 'required|email|unique:admins,email',
+        $data = $request->validate([
+            'prenom'       => 'required|string|max:255',
+            'nom'          => 'required|string|max:255',
+            'email'        => 'required|email|unique:admins,email',
             'mot_de_passe' => 'required|string|min:6',
-            'phone' => 'nullable|string',
-            'gouvernorat' => 'nullable|string',
+            'phone'        => 'nullable|string',
+            'gouvernorat'  => 'nullable|string',
         ]);
 
-        $admin = Admin::create($validatedData);
-
-        return response()->json($admin, 201);
-    }
-
-    public function show($id)
-    {
-        $admin = Admin::findOrFail($id);
-        return response()->json($admin);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $admin = Admin::findOrFail($id);
-
-        $validatedData = $request->validate([
-            'prenom'  => 'required|string|max:255',
-            'nom'  => 'required|string|max:255',
-            'email' => 'sometimes|required|email|unique:admins,email,' . $admin->id,
-            'mot_de_passe' => 'required|string|min:6',
-            'phone' => 'nullable|string',
-            'gouvernorat' => 'nullable|string',
+        $admin = Admin::create([
+            'prenom'       => $data['prenom'],
+            'nom'          => $data['nom'],
+            'email'        => $data['email'],
+            'mot_de_passe' => Hash::make($data['mot_de_passe']),
+            'phone'        => $data['phone'] ?? null,
+            'gouvernorat'  => $data['gouvernorat'] ?? null,
+            'api_token'    => Str::random(60),
         ]);
 
-        $admin->update($validatedData);
-
-        return response()->json($admin);
+        return response()->json([
+            'admin' => $admin,
+            'token' => $admin->api_token,
+        ], 201);
     }
 
-    public function destroy($id)
+    public function login(Request $request)
     {
-        $admin = Admin::findOrFail($id);
-        $admin->delete();
+        $data = $request->validate([
+            'email'        => 'required|email',
+            'mot_de_passe' => 'required|string',
+        ]);
 
-        return response()->json(null, 204);
+        $admin = Admin::where('email', $data['email'])->first();
+
+        if (! $admin || ! Hash::check($data['mot_de_passe'], $admin->mot_de_passe)) {
+            return response()->json(['message' => 'Identifiants invalides'], 401);
+        }
+
+        $admin->api_token = Str::random(60);
+        $admin->save();
+
+        return response()->json([
+            'admin' => $admin,
+            'token' => $admin->api_token,
+        ]);
     }
 }
-
