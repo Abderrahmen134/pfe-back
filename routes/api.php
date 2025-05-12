@@ -47,8 +47,9 @@ Route::put('/devis/{id}/demander-commande', [DevisController::class, 'demanderCo
 Route::put('/devis/{id}/gererCommande', [DevisController::class, 'gererCommande']);
 Route::get('/devis/CommandesDemandees', [DevisController::class, 'devisCommandesDemandees']);
 Route::get('/devis/commandeValidee', [DevisController::class, 'commandeValidee']);
-Route::post('/admin/register', [AuthController::class, 'register']);
-Route::post('/admin/login', [AuthController::class, 'login']);
+Route::post('/admin/register', [AdminController::class, 'register']);
+Route::post('/admin/login', [AdminController::class, 'login']);
+
 
 
 

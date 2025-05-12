@@ -3,36 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
-class AdminAuthController extends Controller
+class AdminController extends Controller
 {
     public function register(Request $request)
     {
         $data = $request->validate([
             'prenom'       => 'required|string|max:255',
             'nom'          => 'required|string|max:255',
-            'email'        => 'required|email|unique:admins,email',
+            'email'        => 'required|email|unique:users,email',
             'mot_de_passe' => 'required|string|min:6',
-            'phone'        => 'nullable|string',
-            'gouvernorat'  => 'nullable|string',
+            'phone'        => 'required|string',
+            'gouvernorat'  => 'required|string',
         ]);
 
-        $admin = Admin::create([
-            'prenom'       => $data['prenom'],
-            'nom'          => $data['nom'],
+        // Création de l'utilisateur
+        $user = User::create([
             'email'        => $data['email'],
             'mot_de_passe' => Hash::make($data['mot_de_passe']),
-            'phone'        => $data['phone'] ?? null,
-            'gouvernorat'  => $data['gouvernorat'] ?? null,
+            'role'         => 'admin',
             'api_token'    => Str::random(60),
         ]);
 
+        // Création du admin lié à l'utilisateur
+        $admin = Admin::create([
+            'prenom'      => $data['prenom'],
+            'nom'         => $data['nom'],
+            'email'       => $data['email'],
+            'mot_de_passe'=> $user->mot_de_passe, // facultatif si pas nécessaire dans admin
+            'phone'       => $data['phone'],
+            'gouvernorat' => $data['gouvernorat'],
+            'user_id'     => $user->id, // 💡 Clé étrangère
+        ]);
+
         return response()->json([
+            'user'   => $user,
             'admin' => $admin,
-            'token' => $admin->api_token,
+            'token'  => $user->api_token
         ], 201);
     }
+
 
     public function login(Request $request)
     {
