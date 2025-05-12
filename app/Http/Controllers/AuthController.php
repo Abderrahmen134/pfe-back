@@ -63,28 +63,46 @@ class AuthController extends Controller
             'mot_de_passe' => 'required|string',
         ]);
 
-        $user = User::where('email', $data['email'])->first();
+        $client = Client::where('email', $data['email'])->first();
 
-        if (! $user || ! Hash::check($data['mot_de_passe'], $user->mot_de_passe)) {
+        if (! $client || ! Hash::check($data['mot_de_passe'], $client->mot_de_passe)) {
             return response()->json(['message' => 'Identifiants invalides'], 401);
         }
 
-        // Regénération du token
-        $user->api_token = Str::random(60);
-        $user->save();
+        $client->api_token = Str::random(60);
+        $client->save();
 
-        $response = [
-            'user'  => $user,
-            'token' => $user->api_token,
-        ];
+        return response()->json([
+            'client' => $client,
+            'token' => $client->api_token,
+        ]);
+        // $data = $request->validate([
+        //     'email'        => 'required|email',
+        //     'mot_de_passe' => 'required|string',
+        // ]);
 
-        // Ajout des données spécifiques
-        if ($user->role === 'client') {
-            $response['client'] = $user->client;
-        } elseif ($user->role === 'admin') {
-            $response['admin'] = $user->admin;
-        }
+        // $user = User::where('email', $data['email'])->first();
 
-        return response()->json($response);
+        // if (! $user || ! Hash::check($data['mot_de_passe'], $user->mot_de_passe)) {
+        //     return response()->json(['message' => 'Identifiants invalides'], 401);
+        // }
+
+        // // Regénération du token
+        // $user->api_token = Str::random(60);
+        // $user->save();
+
+        // $response = [
+        //     'user'  => $user,
+        //     'token' => $user->api_token,
+        // ];
+
+        // // Ajout des données spécifiques
+        // if ($user->role === 'client') {
+        //     $response['client'] = $user->client;
+        // } elseif ($user->role === 'admin') {
+        //     $response['admin'] = $user->admin;
+        // }
+
+        // return response()->json($response);
     }
 }
