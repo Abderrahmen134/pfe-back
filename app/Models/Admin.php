@@ -16,11 +16,17 @@ class Admin extends Model
         'mot_de_passe',
         'phone',
         'gouvernorat',
-        'api_token'
+        'api_token',
+        "user_id"
     ];
 
     public function getAuthPassword()
     {
         return $this->mot_de_passe;
     }
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 }

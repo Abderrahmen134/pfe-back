@@ -23,6 +23,8 @@ class CreateAdminsTable extends Migration
         $table->string('gouvernorat')->nullable();
         $table->string('api_token', 80)->unique()->nullable()->default(null);
         $table->timestamps();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
     });
 }
 

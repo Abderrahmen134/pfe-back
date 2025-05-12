@@ -142,4 +142,5 @@ public function commandeValidee()
         'data' => $devis
     ], 200);
 }
+
 }
