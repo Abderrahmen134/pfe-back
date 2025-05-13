@@ -49,7 +49,9 @@ Route::get('/devis/CommandesDemandees', [DevisController::class, 'devisCommandes
 Route::get('/devis/commandeValidee', [DevisController::class, 'commandeValidee']);
 Route::post('/admin/register', [AdminController::class, 'register']);
 Route::post('/admin/login', [AdminController::class, 'login']);
-
+Route::resource('admin', AdminController::class)->only([
+    'index', 'store', 'update', 'destroy'
+]);
 
 
 
