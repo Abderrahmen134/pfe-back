@@ -52,6 +52,7 @@ Route::post('/admin/login', [AdminController::class, 'login']);
 Route::resource('admin', AdminController::class)->only([
     'index', 'store', 'update', 'destroy'
 ]);
+Route::get('/devis/commandeLivree', [DevisController::class, 'commandeLivree']);
 
 
 
