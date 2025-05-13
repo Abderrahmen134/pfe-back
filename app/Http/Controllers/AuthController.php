@@ -57,52 +57,33 @@ class AuthController extends Controller
      * Connexion d’un utilisateur (admin ou client)
      */
     public function login(Request $request)
-    {
-        $data = $request->validate([
-            'email'        => 'required|email',
-            'mot_de_passe' => 'required|string',
-        ]);
+{
+    $data = $request->validate([
+        'email'        => 'required|email',
+        'mot_de_passe' => 'required|string',
+    ]);
 
-        $client = Client::where('email', $data['email'])->first();
+    // Recherche du client
+    $client = Client::where('email', $data['email'])->first();
 
-        if (! $client || ! Hash::check($data['mot_de_passe'], $client->mot_de_passe)) {
-            return response()->json(['message' => 'Identifiants invalides'], 401);
-        }
-
-        $client->api_token = Str::random(60);
-        $client->save();
-
-        return response()->json([
-            'client' => $client,
-            'token' => $client->api_token,
-        ]);
-        // $data = $request->validate([
-        //     'email'        => 'required|email',
-        //     'mot_de_passe' => 'required|string',
-        // ]);
-
-        // $user = User::where('email', $data['email'])->first();
-
-        // if (! $user || ! Hash::check($data['mot_de_passe'], $user->mot_de_passe)) {
-        //     return response()->json(['message' => 'Identifiants invalides'], 401);
-        // }
-
-        // // Regénération du token
-        // $user->api_token = Str::random(60);
-        // $user->save();
-
-        // $response = [
-        //     'user'  => $user,
-        //     'token' => $user->api_token,
-        // ];
-
-        // // Ajout des données spécifiques
-        // if ($user->role === 'client') {
-        //     $response['client'] = $user->client;
-        // } elseif ($user->role === 'admin') {
-        //     $response['admin'] = $user->admin;
-        // }
-
-        // return response()->json($response);
+    // Vérifie si le client existe
+    if (! $client || ! Hash::check($data['mot_de_passe'], $client->mot_de_passe)) {
+        return response()->json(['message' => 'Identifiants invalides'], 401);
     }
+
+    // Vérifie si le client est actif
+    if ($client->statut !== 'actif') {
+        return response()->json(['message' => 'Votre compte est désactivé. Veuillez contacter l\'administrateur.'], 403);
+    }
+
+    // Génère un nouveau token
+    $client->api_token = Str::random(60);
+    $client->save();
+
+    return response()->json([
+        'client' => $client,
+        'token'  => $client->api_token,
+    ]);
+}
+
 }

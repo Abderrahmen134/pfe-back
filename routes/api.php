@@ -53,6 +53,7 @@ Route::resource('admin', AdminController::class)->only([
     'index', 'store', 'update', 'destroy'
 ]);
 Route::get('/devis/commandeLivree', [DevisController::class, 'commandeLivree']);
+Route::patch('/clients/{id}/statut', [ClientController::class, 'updateStatut']);
 
 
 

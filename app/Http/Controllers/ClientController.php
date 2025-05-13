@@ -65,4 +65,18 @@ class ClientController extends Controller
 
         return response()->json(null, 204);
     }
+    public function updateStatut(Request $request, $id)
+{
+    $client = Client::findOrFail($id);
+
+    $validatedData = $request->validate([
+        'statut' => 'required|in:actif,non actif',
+    ]);
+
+    $client->statut = $validatedData['statut'];
+    $client->save();
+
+    return response()->json($client);
+}
+
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     use HasFactory;
-protected $fillable = ['prenom','nom', 'email' ,'phone', 'gouvernorat','mot_de_passe', 'api_token',"user_id"];
+protected $fillable = ['prenom','nom', 'email' ,'phone', 'gouvernorat','mot_de_passe', 'api_token',"user_id", 'statut'];
     //ptected $hidden = ['mot_de_passe', 'api_token'];
     public function getAuthPassword()
     {
