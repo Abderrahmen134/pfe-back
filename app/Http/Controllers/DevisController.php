@@ -10,7 +10,7 @@ class DevisController extends Controller
     // GET /api/devis
     public function index()
     {
-        return Devis::all();
+        return Devis::with('client')->get();
     }
 
     // POST /api/devis

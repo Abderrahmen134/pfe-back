@@ -8,6 +8,7 @@ use App\Http\Controllers\DevisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LigneDevisController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Route::resource('admin', AdminController::class)->only([
 ]);
 Route::get('/devis/commandeLivree', [DevisController::class, 'commandeLivree']);
 Route::patch('/clients/{id}/statut', [ClientController::class, 'updateStatut']);
+Route::apiResource('types', TypeController::class);
 
 
 

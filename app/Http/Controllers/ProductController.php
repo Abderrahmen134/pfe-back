@@ -29,6 +29,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'image' => 'required|string|max:255',
+            'type_id' => 'required|exists:types,id',
 
         ]);
 
@@ -58,6 +59,7 @@ class ProductController extends Controller
             'price' => 'sometimes|required|numeric|min:0',
             'quantity' => 'sometimes|required|integer|min:0',
             'image' => 'required|string|max:255',
+            'type_id' => 'sometimes|required|exists:types,id',
         ]);
 
         $product->update($validated);
