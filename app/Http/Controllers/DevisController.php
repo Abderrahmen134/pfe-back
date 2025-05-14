@@ -142,7 +142,7 @@ public function commandeValidee()
         'data' => $devis
     ], 200);
 }
-public function commandeLivree()
+ public function commandeLivree()
 {
     // Récupère tous les devis où le statut est "commande_demandee"
     $devis = Devis::where('status', 'commande_livree')->get();

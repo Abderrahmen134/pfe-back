@@ -17,7 +17,8 @@ class Admin extends Model
         'phone',
         'gouvernorat',
         'api_token',
-        "user_id"
+        "user_id",
+        'statutad',
     ];
 
     public function getAuthPassword()

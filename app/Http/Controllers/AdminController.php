@@ -19,9 +19,9 @@ class AdminController extends Controller
             'mot_de_passe' => 'required|string|min:6',
             'phone'        => 'required|string',
             'gouvernorat'  => 'required|string',
+            'statutad'     => 'in:actif,non actif', // facultatif
         ]);
 
-        // Création de l'utilisateur
         $user = User::create([
             'email'        => $data['email'],
             'mot_de_passe' => Hash::make($data['mot_de_passe']),
@@ -29,54 +29,59 @@ class AdminController extends Controller
             'api_token'    => Str::random(60),
         ]);
 
-        // Création du admin lié à l'utilisateur
         $admin = Admin::create([
             'prenom'      => $data['prenom'],
             'nom'         => $data['nom'],
             'email'       => $data['email'],
-            'mot_de_passe'=> $user->mot_de_passe, // facultatif si pas nécessaire dans admin
+            'mot_de_passe'=> $user->mot_de_passe,
             'phone'       => $data['phone'],
             'gouvernorat' => $data['gouvernorat'],
-            'user_id'     => $user->id, // 💡 Clé étrangère
+            'user_id'     => $user->id,
+            'statutad'    => $data['statutad'] ?? 'actif',
         ]);
 
         return response()->json([
             'user'   => $user,
-            'admin' => $admin,
+            'admin'  => $admin,
             'token'  => $user->api_token
         ], 201);
     }
 
-
     public function login(Request $request)
-    {
-        $data = $request->validate([
-            'email'        => 'required|email',
-            'mot_de_passe' => 'required|string',
-        ]);
+{
+    $data = $request->validate([
+        'email'        => 'required|email',
+        'mot_de_passe' => 'required|string',
+    ]);
 
-        $admin = Admin::where('email', $data['email'])->first();
+    $admin = Admin::where('email', $data['email'])->first();
 
-        if (! $admin || ! Hash::check($data['mot_de_passe'], $admin->mot_de_passe)) {
-            return response()->json(['message' => 'Identifiants invalides'], 401);
-        }
-
-        $admin->api_token = Str::random(60);
-        $admin->save();
-
-        return response()->json([
-            'admin' => $admin,
-            'token' => $admin->api_token,
-        ]);
+    // Vérifie si l'admin existe et que le mot de passe est correct
+    if (! $admin || ! Hash::check($data['mot_de_passe'], $admin->mot_de_passe)) {
+        return response()->json(['message' => 'Identifiants invalides'], 401);
     }
-        // ✅ Liste des admins
+
+    // ✅ Vérifie si l'admin est actif
+    if ($admin->statutad === 'non actif') {
+        return response()->json(['message' => 'Votre compte administrateur est désactivé.'], 403);
+    }
+
+    $admin->api_token = Str::random(60);
+    $admin->save();
+
+    return response()->json([
+        'admin' => $admin,
+        'token' => $admin->api_token,
+    ]);
+}
+
+
     public function index()
     {
         $admins = Admin::with('user')->get();
         return response()->json($admins);
     }
 
-    // ✅ Créer un nouvel admin
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -86,6 +91,7 @@ class AdminController extends Controller
             'mot_de_passe' => 'required|string|min:6',
             'phone'        => 'nullable|string',
             'gouvernorat'  => 'nullable|string',
+            'statutad'     => 'in:actif,non actif', // facultatif
         ]);
 
         $user = User::create([
@@ -103,12 +109,12 @@ class AdminController extends Controller
             'phone'        => $data['phone'],
             'gouvernorat'  => $data['gouvernorat'],
             'user_id'      => $user->id,
+            'statutad'     => $data['statutad'] ?? 'actif',
         ]);
 
         return response()->json($admin, 201);
     }
 
-    // ✅ Voir un admin
     public function show($id)
     {
         $admin = Admin::with('user')->find($id);
@@ -120,7 +126,6 @@ class AdminController extends Controller
         return response()->json($admin);
     }
 
-    // ✅ Modifier un admin
     public function update(Request $request, $id)
     {
         $admin = Admin::find($id);
@@ -138,7 +143,6 @@ class AdminController extends Controller
             'gouvernorat'  => 'sometimes|string',
         ]);
 
-        // Mettre à jour les champs liés au user
         if (isset($data['email'])) {
             $admin->user->update(['email' => $data['email']]);
         }
@@ -154,7 +158,6 @@ class AdminController extends Controller
         return response()->json($admin);
     }
 
-    // ✅ Supprimer un admin
     public function destroy($id)
     {
         $admin = Admin::find($id);
@@ -163,10 +166,24 @@ class AdminController extends Controller
             return response()->json(['message' => 'Admin non trouvé'], 404);
         }
 
-        // Supprime le user lié
         $admin->user()->delete();
         $admin->delete();
 
         return response()->json(['message' => 'Admin supprimé avec succès']);
+    }
+
+    // ✅ Nouvelle méthode pour mettre à jour le statut
+    public function updateStatut(Request $request, $id)
+    {
+        $admin = Admin::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'statutad' => 'required|in:actif,non actif',
+        ]);
+
+        $admin->statutad = $validatedData['statutad'];
+        $admin->save();
+
+        return response()->json($admin);
     }
 }

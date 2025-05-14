@@ -56,6 +56,7 @@ Route::resource('admin', AdminController::class)->only([
 Route::get('/devis/commandeLivree', [DevisController::class, 'commandeLivree']);
 Route::patch('/clients/{id}/statut', [ClientController::class, 'updateStatut']);
 Route::apiResource('types', TypeController::class);
+Route::put('/admins/{id}/statut', [AdminController::class, 'updateStatut']);
 
 
 
