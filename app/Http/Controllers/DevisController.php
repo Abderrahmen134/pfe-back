@@ -17,7 +17,7 @@ class DevisController extends Controller
     public function store(Request $request)
     {
         $request->merge([
-            'status' => $request->input('status', 'untraited')
+            'status' => $request->input('status', 'non-traité')
         ]);
     
         $validated = $request->validate([
@@ -93,7 +93,7 @@ public function demanderCommande($id)
     $devis = Devis::findOrFail($id);
 
     // Vérifie que le devis est accepté avant de permettre la demande
-    if ($devis->status !== 'accepted') {
+    if ($devis->status !== 'accepté') {
         return response()->json(['message' => 'Le devis doit être accepté avant de demander une commande.'], 403);
     }
 
